@@ -1,0 +1,12 @@
+# local env
+/docker/data
+/message.json/
+.env
+
+# developer files
+.idea
+/env-variables.env
+/cdn
+/webapp
+/node_modules
+/docker/config/mysql/init/01-databases.sql

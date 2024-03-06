@@ -1,0 +1,47 @@
+version: '3'
+services:
+    apache:
+        hostname: apache
+        build:
+            context: .
+            dockerfile: docker/apache/Dockerfile
+        ports:
+            - '80:80'
+        volumes:
+            - './docker/config/vhosts:/etc/apache2/sites-enabled'
+            - './webapp:/var/www/webapp'
+            - './cdn:/var/www/cdn'
+    mysql:
+        hostname: mysql
+        image: 'mariadb:10'
+        volumes:
+            - './docker/data/db:/var/lib/mysql'
+            - ./docker/config/mysql/init:/docker-entrypoint-initdb.d
+        environment:
+            MARIADB_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+            MARIADB_USER: $DB_USERNAME
+            MARIADB_PASSWORD: $DB_PASSWORD
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+        ports:
+            - '7895:3306'
+    webapp:
+        hostname: webapp
+        build:
+            context: .
+            dockerfile: docker/webapp/Dockerfile
+        user: '${LOCAL_USER}'
+        volumes:
+            - './webapp:/var/www/webapp'
+            - './cdn:/var/www/cdn'
+        depends_on:
+            - mysql
+    mailhog:
+        hostname: mailhog
+        # do not use in production!
+        image: mailhog/mailhog:latest
+        environment:
+            - MH_STORAGE=maildir
+        volumes:
+            - ./docker/mailhog/maildir:/maildir:rw,delegated
+        ports:
+            - "8025:8025"
