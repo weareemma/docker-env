@@ -38,6 +38,7 @@ RUN docker-php-ext-install -j$(nproc) xsl
 RUN docker-php-ext-install -j$(nproc) xml
 RUN docker-php-ext-install -j$(nproc) intl
 RUN docker-php-ext-install -j$(nproc) zip
+RUN docker-php-ext-install -j$(nproc) exif
 
 RUN apt-get install -y libmemcached-dev zlib1g-dev && \
     pecl install memcached && \
